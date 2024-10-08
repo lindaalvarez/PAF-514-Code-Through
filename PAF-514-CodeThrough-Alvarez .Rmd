@@ -1,0 +1,216 @@
+---
+title: "PAF 514: Working with sjPlot"
+author: "Linda Alvarez"
+date: "7 October 2024"
+output:
+  html_document:
+    theme: readable
+    df_print: paged
+    highlight: tango
+    toc: true
+    toc_float: true
+  pdf_document:
+    toc: true
+---
+
+```{r include = FALSE}
+
+# SET GLOBAL KNITR OPTIONS
+
+library(devtools)
+library(sjPlot)
+library(sjmisc)
+library(sjlabelled)
+library(ggplot2)
+
+```
+
+<br>
+<br>
+
+
+
+# Introduction
+
+* Most professions and disciplines require organization, especially when dealing with statistical data in R. Statistical data and the visualization of this data is critical for the social sciences since it allows one to discover certain trends, puts perspective on information, and allows a reader to see the same story in a different manner. 
+<br>
+
+## Content Overview
+
+* sjPlot allows the user to create data visualization in the form of histograms, box plots, linear models, scatter plots, cluster analysis, constructing idex or score variables, mixed effects models among many other forms of data visualization. 
+<br>
+
+## Why You Should Care
+
+* This topic is valuable to learn since this package provides a wide variety of options for the user to conceptualize their information. sjPlot is similar to that of ggplot but provides different forms of data visualization that might offer the user some uniqueness. sjPlot is known for creating high quality plots and tables as a extension of r and ggplot2. An attractive feature of sjPlot is that it simiplies the overall process of generating these plots. 
+<br>
+
+## Learning Objectives
+
+* In this code through you'll be introduced and allowed to practice creating plots using the sjPlot package. 
+<br>
+
+# Getting Started with sjPlot
+
+* Here, in this tutorial we will show the creation of different plots with unique characteristics. In order to to get you comfortable with this package, we will start with creating simple plots in black and white, and then practice with more complex plots as we gain more experience. 
+
+<br>
+
+## Basic Example
+
+
+* A basic example will introduce us to the the different ways of using the sjPlot package. This first example takes a sample data set of informal care giving in Europe and creates black and white plot comparing the elder's dependency to the carer's education levels. 
+
+```{r}
+theme_set(theme_bw())
+data(efc)
+plot_grpfrq(efc$e42dep, efc$c172code, geom.colors = "gs")
+```
+
+* Now we will change the plot slightly to reflect the elder's gender instead of the carer's level of education. We will also be adding some color.
+
+```{r}
+
+set_theme(
+  geom.outline.color = "antiquewhite4", 
+  geom.outline.size = 1, 
+  geom.label.size = 3,
+  geom.label.color = "grey50",
+  title.color = "black", 
+  title.size = 1.5, 
+  axis.angle.x = 45, 
+  axis.textcolor = "darkblue", 
+  base = theme_bw()
+)
+
+plot_grpfrq(
+  efc$e42dep, 
+  efc$e16sex, 
+  title = NULL, 
+  geom.colors = c("cadetblue", "pink"), 
+  geom.size = 0.4
+)
+
+```
+
+## Building Upon the Example
+
+* Now that we have practiced with simple graphs we are going to create a similar plot that uses the Colorbrewer palette. In order to do this we are specify our palette with the geom.colors code. 
+
+```{r}
+set_theme(
+  base = theme_blank(),
+  axis.title.size = 1.0,
+  axis.textsize = 1.0,
+  legend.size = .8,
+  legend.title.size = .7,
+  geom.label.size = 2
+)
+
+plot_grpfrq(
+  efc$e42dep, 
+  efc$e15relat, 
+  geom.colors = "BuPu", 
+  show.values = FALSE
+)
+```
+
+* Now that we have gotten familiar with some aspects of the sjPlot package we will show another feature that we can use while coding.
+<br>
+
+## More Examples
+
+* The sjPlot package contains a set of pre-defined themes, one is able to see the complete set by accessing "sjPlot-themes" on the github page that I will attach. This example takes the theme light to create a plot. Upon reading the description of theme light we learn that it is a signature theme that contains light grey lines and axes, allowing the reader to focus on the data. 
+
+```{r} 
+
+efc <- to_factor(efc, e42dep, c172code)
+m <- lm(neg_c_7 ~ pos_v_4 + c12hour + e42dep + c172code, data = efc)
+
+# reset theme
+set_theme(base = theme_light())
+
+# forest plot of regression model
+p <- plot_model(m)
+
+# default theme
+p
+```
+
+<br>
+
+## Creating Your Theme 
+
+ * Once you become more comfortable with the package as a whole, you are able to create your own customization. In this example we will use the same data set and create our own theme.
+
+
+```{r}
+set_theme(
+  base = theme_classic(), 
+  axis.linecolor = "white",     
+  axis.textcolor.y = "black", 
+  axis.tickslen = 0,            
+  legend.title.color = "brown",   
+  legend.title.size = 3,       
+  legend.color = "purple",       
+  legend.pos = "top",           
+  axis.title.size = 1.0,
+  axis.textsize = 1.0,
+  legend.size = .9,
+  geom.label.size = 4
+)
+
+plot_grpfrq(efc$e42dep, efc$e16sex)
+```
+
+* Now lets use the exact same theme and quite literally 'flip' our graph on its side
+
+```{r}
+set_theme(
+  base = theme_classic(), 
+  axis.linecolor = "white",     
+  axis.textcolor.y = "black", 
+  axis.tickslen = 0,            
+  legend.title.color = "brown",   
+  legend.title.size = 3,       
+  legend.color = "purple",       
+  legend.pos = "top",           
+  axis.title.size = 1.0,
+  axis.textsize = 1.0,
+  legend.size = .9,
+  geom.label.size = 4
+)
+
+plot_grpfrq(efc$e42dep, efc$e16sex, coord.flip = TRUE)
+```
+
+* Hopefully you have learned some useful information and are able to implement the sjPlot package into your work. Happy coding! 
+
+<br>
+
+
+# Works Cited
+
+This code through references and cites the following sources
+
+* Resource I: [https://strengejacke.github.io/sjPlot/index.html.](https://www.google.com)
+
+* Resource II: [https://cran.r-project.org/web/packages/sjmisc/vignettes/exploringdatasets.html#:~:text=The%20sample%20data%20set%20efc%20is%20part%20of%20this](https://www.google.com)
+
+* Resource III: [https://cran.r-project.org/web/packages/sjPlot/index.html](https://www.google.com)
+
+* Resource IV: [https://www.rdocumentation.org/packages/sjPlot/versions/2.8.16](https://google.com)
+
+* Resource V: [https://rbasics.org/packages/sjplot-package-in-r/#:~:text=The%20sjPlot%20package%20in%20R%20provides%20a%20set](https://google.com)
+<br>
+
+# Further Resources
+
+If you would like to learn more about sjPlot please refer to the following:
+
+* Lüdecke, M. D. (2024). Package ‘sjPlot’. [https://vps.fmvz.usp.br/CRAN/web/packages/sjPlot/sjPlot.pdf] (https://www.google.com)
+
+* Juretig, F. (2019). R statistics cookbook: over 100 recipes for performing complex statistical operations with R 3.5 (1st edition). Packt.
+. Source II. [https://learning-oreilly-com.ezproxy1.lib.asu.edu/library/view/r-statistics-cookbook/9781789802566/4977208e-0276-4f2e-b358-cbfda1a2af0d.xhtml.](https://www.google.com)
+
+<br>
